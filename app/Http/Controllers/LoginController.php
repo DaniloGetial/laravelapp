@@ -31,6 +31,6 @@ class LoginController extends Controller
     $request->session()->invalidate();
     $request->session()->regenerateToken();
 
-    return redirect('/'); // Asegúrate que esta ruta exista y lleve al formulario de login
+    return redirect('/'); 
     }
 }
