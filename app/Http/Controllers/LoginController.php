@@ -33,4 +33,17 @@ class LoginController extends Controller
 
     return redirect('/'); 
     }
+
+    public function validateAccount($token){
+
+    $user = User::where('remember_token', $token)->first();
+    if ($user && $user->remember_token == $token) {
+        $user->remember_token = null;
+        $user->save();
+        return redirect('/')->with('sucess', 'Account confirmed successfully.');
+
+    }else {
+        return redirect('/')->with('Error',  'ivalid token.');
+    }
+}
 }

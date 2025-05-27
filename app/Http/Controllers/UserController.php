@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\UserNotification;
 use Illuminate\Http\Request;
 use App\Models\User;
 
@@ -47,15 +48,26 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
-        return redirect('/');
-    }
+  public function store(Request $request)
+{
+   
+
+    $remember_token = bin2hex(random_bytes(10));
+
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => bcrypt($request->password),
+    ]);
+
+    $user->remember_token = $remember_token;
+    $user->save();
+
+    $user->notify(new UserNotification());
+
+    return redirect('/');
+}
+
 
     /**
      * Display the specified resource.

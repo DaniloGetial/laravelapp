@@ -14,6 +14,13 @@ use App\Http\Controllers\LoginController;
 |
 */
 
+Route::middleware(['auth', 'account'])->group(function(){
+    Route::get('/logout', [LoginController::class, 'logout']);
+    Route::get('/usuarios', [UserController::class, 'index']);
+    Route::delete('/usuarios/{id}', [UserController::class, 'destroy']);
+});
+Route::get('/users/active/account/{token}', [LoginController::class, 'validateAccount']); 
+    
 
 
 Route::get('/' ,[LoginController::class, 'index']);
