@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\BlogController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,6 +14,17 @@ use App\Http\Controllers\LoginController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/blogs/{id}/edit', [BlogController::class, 'edit'])->name('blogs.edit');
+
+Route::get('/blogs/{id}/edit', [BlogController::class, 'edit'])->name('blogs.edit');
+Route::put('/blogs/{id}', [BlogController::class, 'update'])->name('blogs.update');
+
+Route::delete('/blogs/{id}', [BlogController::class, 'destroy'])->name('blogs.destroy');
+
+Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index');
+
+Route::get('/blogs/create', [BlogController::class, 'create']);
+Route::post('/blogs/store', [BlogController::class, 'store'])->name('blogs.store');
 
 Route::middleware(['auth', 'account'])->group(function(){
     Route::get('/logout', [LoginController::class, 'logout']);

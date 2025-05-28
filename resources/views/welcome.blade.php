@@ -103,7 +103,7 @@
                         </div>
                     </div>
                     
-                    <div class="mb-4">
+                    <!--<div class="mb-4">
                         <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
                         <div class="input-with-icon">
                             <i class="fas fa-phone input-icon"></i>
@@ -117,7 +117,7 @@
                             <i class="fas fa-at input-icon"></i>
                             <input type="text" id="username" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ej: juan.perez" required>
                         </div>
-                    </div>
+                    </div>-->
                     
                     <div class="flex gap-4 mb-4">
                         <div class="flex-1">
@@ -128,6 +128,7 @@
                                 <i class="fas fa-eye toggle-password" onclick="togglePassword('password', this)"></i>
                             </div>
                         </div>
+                        <!--
                         <div class="flex-1">
                             <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirmar</label>
                             <div class="input-with-icon">
@@ -148,7 +149,7 @@
                                 <option value="usuario">Usuario Regular</option>
                             </select>
                         </div>
-                    </div>
+                    </div>-->
                     
                     <div class="flex justify-end gap-3">
                         <a href="{{ url()->previous() }}" class="btn-secondary px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2">

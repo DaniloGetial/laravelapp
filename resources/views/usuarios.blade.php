@@ -50,5 +50,12 @@
     </button>
 </form>
     
+  <a href="/blogs/create" style="display: inline-block; padding: 10px 20px; background-color:rgb(255, 153, 0); color: white; text-decoration: none; border: none; border-radius: 5px;">
+  Crear un Blog Nuevo
+</a>
+   
+ <a href="/blogs" style="display: inline-block; padding: 10px 20px; background-color:rgb(255, 0, 221); color: white; text-decoration: none; border: none; border-radius: 5px;">
+  Ver mis Blogs
+</a>
    
 </body>
