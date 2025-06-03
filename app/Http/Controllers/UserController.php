@@ -18,11 +18,16 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        $usuarios = User::all();
-        return view('usuarios', compact('usuarios'));
-    }
+public function Listar()
+{
+    $usuarios = User::all();
+    return response()->json([
+        
+        'usuarios' => $usuarios
+    ]);
+}
+
+    
 
     public function login()
     {
@@ -63,9 +68,12 @@ class UserController extends Controller
     $user->remember_token = $remember_token;
     $user->save();
 
-    $user->notify(new UserNotification());
+   $user->notify(new UserNotification());
 
-    return redirect('/');
+    return Response()->json([
+        'message' => 'Usuario creado correctamente',
+        'user' => $user
+    ]);
 }
 
 
@@ -75,11 +83,34 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        $usuario = User::find($id);
-        return view('show', compact('usuario'));
+  
+  
+  
+     public function show(Request $request)
+{
+    $id = $request->input('id');
+
+    if (!$id) {
+        return response()->json([
+            
+            'message' => 'No se ha proporcionado el ID del usuario.'
+        ], 400);
     }
+
+    $usuario = User::find($id);
+
+    if (!$usuario) {
+        return response()->json([
+            
+            'message' => 'Usuario no encontrado.'
+        ], 404);
+    }
+
+    return response()->json([
+        
+        'usuario' => $usuario
+    ]);
+}
 
     /**
      * Show the form for editing the specified resource.
@@ -101,16 +132,55 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        //Actualizar
-        $usuario = User::find($id);
-        $usuario->name = $request->name;
-        $usuario->email = $request->email;
-        $usuario->password = bcrypt($request->password);
-        $usuario->save();
-        return redirect('/usuarios');
+ public function update(Request $request)
+{
+    $validator = \Validator::make($request->all(), [
+        'id' => 'required|integer|exists:users,id',
+        'name' => 'sometimes|required|string|max:255',
+        'email' => 'sometimes|required|email|unique:users,email,' . $request->id,
+        'password' => 'sometimes|nullable|string|min:6',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            
+            'message' => 'Errores de validación.',
+            'errors' => $validator->errors()
+        ], 422);
     }
+
+    $usuario = User::find($request->id);
+
+    if (!$usuario) {
+        return response()->json([
+            
+            'message' => 'Usuario no encontrado.'
+        ], 404);
+    }
+
+    if ($request->has('name')) {
+        $usuario->name = $request->name;
+    }
+
+    if ($request->has('email')) {
+        $usuario->email = $request->email;
+    }
+
+    if ($request->filled('password')) {
+        $usuario->password = bcrypt($request->password);
+    }
+
+    $usuario->save();
+
+    return response()->json([
+        
+        'message' => 'Usuario actualizado correctamente.',
+        'usuario' => $usuario
+    ]);
+}
+
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -118,11 +188,15 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request )
     {
         //Eliminar
+        $id = $request->input('id');
         $usuario = User::find($id);
         $usuario->delete();
-        return redirect('/usuarios');
+        return response()->json([
+            
+            'message' => 'Usuario eliminado correctamente.'
+        ]);
     }
 }

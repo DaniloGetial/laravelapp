@@ -47,7 +47,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });*/
 
 //Route ::get('/', [UserController::class, 'index']);
-Route ::post('/store', [UserController::class, 'store']);
+//Route ::post('/store', [UserController::class, 'store']);
 //Route::put('/usuarios/{id}', [UserController::class, 'update'])->name('usuarios.update');
 
 Route::resource('usuarios', UserController::class);

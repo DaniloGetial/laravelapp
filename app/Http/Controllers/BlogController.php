@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Blog;
 
 
+
 class BlogController extends Controller
 {
     public function index()
@@ -23,38 +24,74 @@ class BlogController extends Controller
     return view('crearblog'); 
 }
     
-public function store(Request $request)
-{
-    // Validar los datos
-    $request->validate([
-        'titulo' => 'required|string|max:255',
-        'contenido' => 'required|string',
-    ]);
+ public function store(Request $request)
+    {
+        $request->validate([
+            'titulo' => 'required|string|max:255',
+            'contenido' => 'required|string',
+        ]);
 
-    // Crear el blog con el ID del usuario autenticado
-    Blog::create([
-        'titulo' => $request->titulo,
-        'contenido' => $request->contenido,
-        'id_user' => Auth::id(),  // Aquí va el ID del usuario logueado
-    ]);
-    
+        $blog = Blog::create([
+            'titulo' => $request->titulo,
+            'contenido' => $request->contenido,
+            'id_user' => auth()->id(),
+        ]);
 
-    // Redirigir con mensaje
-    return redirect()->route('blogs.index')->with('success', '¡Blog creado con éxito!');
-}
-
-    public function destroy($id)
-{
-    $blog = Blog::findOrFail($id);
-
-    
-    // Verificar si el usuario autenticado es el propietario del blog
-    if ($blog->id_user !== Auth::id()) {
-        return redirect()->route('blogs.index')->with('error', 'No tienes permiso para eliminar este blog.');
+        return response()->json([
+            
+            'message' => '¡Blog creado con éxito!',
+            'blog' => $blog
+        ], 201);
     }
-     $blog->delete();
-    return redirect()->route('blogs.index')->with('success', '¡Blog eliminado con éxito!');
+
+public function Listar()
+{
+    $blogs = Blog::all();
+
+    return response()->json([
+        
+        'blogs' => $blogs
+    ]);
 }
+
+public function Buscar(Request $request)
+{
+    
+    $id = $request->input('id');
+
+
+    $blogs = Blog::find($id);
+
+    return response()->json([
+       
+        'blogs' => $blogs
+    ]);
+}
+
+
+public function destroy(Request $request)
+{
+    $request->validate([
+        'id' => 'required|integer'
+    ]);
+
+    $blog = Blog::findOrFail($request->id);
+
+    if ($blog->id_user !== Auth::id()) {
+        return response()->json([
+            
+            'message' => 'No tienes permiso para eliminar este blog.'
+        ], 403);
+    }
+
+    $blog->delete();
+
+    return response()->json([
+        
+        'message' => '¡Blog eliminado con éxito!'
+    ]);
+}
+
 
 public function edit($id)
 {
@@ -67,17 +104,21 @@ public function edit($id)
     return view('editblog', compact('blog'));
 }
 
-public function update(Request $request, $id)
+public function update(Request $request)
 {
     $request->validate([
+        'id' => 'required|integer|exists:blogs,id',
         'titulo' => 'required|string|max:255',
         'contenido' => 'required|string',
     ]);
 
-    $blog = Blog::findOrFail($id);
+    $blog = Blog::findOrFail($request->input('id'));
 
     if ($blog->id_user !== Auth::id()) {
-        return redirect()->route('blogs.index')->with('error', 'No tienes permiso para actualizar este blog.');
+        return response()->json([
+            
+            'message' => 'No tienes permiso para actualizar este blog.'
+        ], 403);
     }
 
     $blog->update([
@@ -85,8 +126,13 @@ public function update(Request $request, $id)
         'contenido' => $request->input('contenido'),
     ]);
 
-    return redirect()->route('blogs.index')->with('success', 'Blog actualizado correctamente.');
+    return response()->json([
+       
+        'message' => 'Blog actualizado correctamente.',
+        'blog' => $blog
+    ]);
 }
+
 
 
 
